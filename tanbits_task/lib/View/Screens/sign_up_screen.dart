@@ -1,8 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:tanbits_task/Provider/sign_up_provider.dart';
 import 'package:tanbits_task/Utills/app_colors.dart';
+import 'package:tanbits_task/View/Screens/login_screen.dart';
 import 'package:tanbits_task/Widgets/custom_text.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -106,10 +109,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ? Icon(
                                 Icons.remove_red_eye,
                                 size: 20.sp,
+                                color: AppColors.labelColor,
                               )
                             : Icon(
                                 Icons.remove_red_eye_outlined,
                                 size: 20.sp,
+                                color: AppColors.labelColor,
                               ),
                       ),
                       hintText: 'Enter Password',
@@ -124,8 +129,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               GestureDetector(
                 onTap: () async {
-                  signUpProvider.signUpMethod();
-               
+                  signUpProvider.setLoading(true);
+                  if (signUpProvider.emailController.text.isEmpty) {
+                    const snackBar = SnackBar(
+                        backgroundColor: AppColors.blackColor,
+                        content: CustomText(
+                          text: "Email Field is not Empty",
+                        ));
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    signUpProvider.setLoading(false);
+                  } else if (signUpProvider.passwordController.text.isEmpty) {
+                    const snackBar = SnackBar(
+                        backgroundColor: AppColors.blackColor,
+                        content: CustomText(
+                          text: "Passsword Field is not Empty",
+                        ));
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    signUpProvider.setLoading(false);
+                  } else {
+                    bool? res = await signUpProvider.signUpMethod(context);
+                    if (res!) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                          ));
+                      signUpProvider.emailController.clear();
+                      signUpProvider.passwordController.clear();
+                    }
+                    signUpProvider.setLoading(false);
+                  }
+                  // signUpProvider.signUpMethod();
                 },
                 child: Container(
                   height: 45.h,
@@ -133,13 +167,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   decoration: BoxDecoration(
                       color: AppColors.blackColor,
                       borderRadius: BorderRadius.circular(12.sp)),
-                  child: Center(
-                    child: CustomText(
-                      text: "Sign Up",
-                      size: 14.sp,
-                      color: AppColors.whiteColor,
-                    ),
-                  ),
+                  child: signUpProvider.isLoading == true
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : Center(
+                          child: CustomText(
+                            text: "Sign Up",
+                            size: 14.sp,
+                            color: AppColors.whiteColor,
+                          ),
+                        ),
                 ),
               ),
             ],

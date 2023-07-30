@@ -7,7 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:tanbits_task/Provider/login_provider.dart';
 import 'package:tanbits_task/Utills/app_colors.dart';
-import 'package:tanbits_task/View/Screens/search_screen.dart';
+import 'package:tanbits_task/View/Screens/home_screen.dart';
 import 'package:tanbits_task/View/Screens/sign_up_screen.dart';
 import 'package:tanbits_task/Widgets/custom_text.dart';
 
@@ -114,10 +114,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           ? Icon(
                               Icons.remove_red_eye,
                               size: 20.sp,
+                              color: AppColors.labelColor,
                             )
                           : Icon(
                               Icons.remove_red_eye_outlined,
                               size: 20.sp,
+                              color: AppColors.labelColor,
                             ),
                     ),
                     hintText: 'Enter Password',
@@ -158,11 +160,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           MaterialPageRoute(
                             builder: (context) => const SearchScreen(),
                           ));
+                      loginProvier.emailController.clear();
+                      loginProvier.passwordController.clear();
                     }
                     loginProvier.setLoading(false);
                   }
-
-                  // Get.to(() => SearchScreen());
                 },
                 child: Container(
                   height: 45.h,

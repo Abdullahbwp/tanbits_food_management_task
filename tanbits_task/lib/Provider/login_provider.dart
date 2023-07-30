@@ -43,15 +43,30 @@ class LoginProvider extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       setLoading(false);
       return true;
-    } catch (e) {
-      //.........Handle login errors....................//
-      log('Error logging in: $e');
-      final snackBar = SnackBar(
-          backgroundColor: AppColors.blackColor,
-          content: CustomText(
-            text: "$e",
-          ));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        final snackBar = SnackBar(
+            backgroundColor: AppColors.blackColor,
+            content: CustomText(
+              text: "User not found!!!",
+            ));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        print('The password provided is too weak.');
+      } else if (e.code == 'wrong-password') {
+        final snackBar = SnackBar(
+            backgroundColor: AppColors.blackColor,
+            content: CustomText(
+              text: "Password is invalid!!!",
+            ));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else if (e.code == 'invalid-email') {
+        final snackBar = SnackBar(
+            backgroundColor: AppColors.blackColor,
+            content: CustomText(
+              text: "Email is invalid!!!",
+            ));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
       setLoading(false);
       return false;
     }
